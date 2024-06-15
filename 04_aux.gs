@@ -1,7 +1,3 @@
-function replaceAccents(textWithAccents) {
-  return textWithAccents.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-
 function variableInEnum(variable, myEnum) {
   for (var value in myEnum) {
     enumValue = myEnum[value];
@@ -14,33 +10,24 @@ function generateUUID() {
   return Utilities.getUuid();
 }
 
-function createUserName(firstName, lastName, userType) {
-  if (userType == UserTypes.TEACHER) {
-    return (replaceAccents(firstName + lastName) + DOMINI_CORREU_PROFESSORS).toLowerCase();
-  }
-  else if (userType == UserTypes.STUDENT) {
-    return (replaceAccents(firstName + lastName) + DOMINI_CORREU_ALUMNES).toLowerCase();
-  }
-  else return false;
+function createErnestLluchGroupEmail(groupName) {
+  return stringConverter(groupName) + DOMINI_CORREU_PROFESSORS;
 }
 
-function getOrgUnit(userType) {
-  if (userType == UserTypes.TEACHER) {
-    return ORG_UNIT_TEACHERS;
-  }
-  else if (userType == UserTypes.STUDENT) {
-    return ORG_UNIT_NEW_STUDENTS;
-  }
-  else return false;
+function createErnestLluchTeacherUsername(firstName, lastName) {
+  return (stringConverter(firstName + lastName) + DOMINI_CORREU_PROFESSORS).toLowerCase();
+}
+
+function createErnestLluchStudentUsername(firstName, lastName, userType) {
+  return (stringConverter(firstName + lastName) + DOMINI_CORREU_ALUMNES).toLowerCase();
+
+}
+
+function replaceAccents(textWithAccents) {
+  return textWithAccents.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 function stringConverter(textToConvert) {
-    return textToConvert.replace(/\s+/g, '_')
-                        .replace(/[.,;:]/g, '')
-                        .replace(/[áäâà]/g, 'a')
-                        .replace(/[éëêè]/g, 'e')
-                        .replace(/[íïîì]/g, 'i')
-                        .replace(/[óöôò]/g, 'o')
-                        .replace(/[úüûù]/g, 'u')
-                        .toLowerCase();
+    return replaceAccents(textToConvert.replace(/\s+/g, '_')
+                        .toLowerCase());
 }

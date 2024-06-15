@@ -5,7 +5,7 @@
 // - CREATE USER
 // - DELETE USER
 
-function getUser(userEmail) {
+function getUserServiceAgent(userEmail) {
   try {
     const user = AdminDirectory.Users.get(userEmail);
     return user;
@@ -15,20 +15,14 @@ function getUser(userEmail) {
   }
 }
 
-function addUser(firstName, lastName, userType, orgUnitPath=null) {
-  if (!(variableInEnum(userType, UserTypes))) {
-    return false;
-  }
-  let userName = createUserName(firstName, lastName, userType);
-  if (orgUnitPath == null) orgUnitPath = getOrgUnit(userType);
-  if (!userName) return false;
+function addUserServiceAgent(firstName, lastName, userName, password, orgUnitPath=null) {
   let user = {
     primaryEmail: userName,
     name: {
       givenName: firstName,
       familyName: lastName,
     },
-    password: DEFAULT_PASSWORD,
+    password: password,
     orgUnitPath: orgUnitPath,
   };
   try {
@@ -39,7 +33,7 @@ function addUser(firstName, lastName, userType, orgUnitPath=null) {
   }
 }
 
-function deleteUser(userId) {
+function deleteUserServiceAgent(userId) {
   try {
     AdminDirectory.Users.remove(userId);
     return true;
@@ -59,9 +53,9 @@ function deleteUser(userId) {
 // - Delete member
 // - Delete group
 
-function createGroup(groupName) {
+function createGroupServiceAgent(groupName, groupEmail) {
   let group = {
-  "email": stringConverter(groupName) + "@iernestlluch.cat",
+  "email": groupEmail,
   "name": groupName,
   "adminCreated": true,
 }
@@ -73,7 +67,7 @@ function createGroup(groupName) {
   }
 }
 
-function deleteGroup(groupId) {
+function deleteGroupServiceAgent(groupId) {
   try {
     AdminDirectory.Groups.remove(groupId);
     return true;
@@ -83,10 +77,10 @@ function deleteGroup(groupId) {
   }
 }
 
-function getGroup(groupName) {
+function getGroupServiceAgent(groupName, domain) {
   let query = "name='" + groupName + "'";
   let optionalArgs = {
-    domain: 'iernestlluch.cat',
+    domain: domain,
     maxResults: 1,
     query: query,
     viewType: 'domain_public',
@@ -102,7 +96,7 @@ function getGroup(groupName) {
   return false;
 }
 
-function addGroupMember(groupEmail, userEmail) {
+function addGroupMemberServiceAgent(groupEmail, userEmail) {
   const member = {
     email: userEmail,
     role: 'MEMBER'
@@ -116,7 +110,7 @@ function addGroupMember(groupEmail, userEmail) {
   }
 }
 
-function deleteGroupMember(groupEmail, userId) {
+function deleteGroupMemberServiceAgent(groupEmail, userId) {
   try {
     AdminDirectory.Members.remove(groupEmail, userId);
     return true;

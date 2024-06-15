@@ -3,8 +3,9 @@
 // - CREATE SHARED DRIVE
 // - GET SHARED DRIVE
 
-function createSharedDrive(driveName) {
-  if (getSharedDrive(driveName) != null) return false;
+function createSharedDriveServiceAgent(driveName) {
+  let sharedDrive = getSharedDriveServiceAgent(driveName);
+  if (sharedDrive != false) return false;
   var requestID = generateUUID();
   var resource = {
     name: driveName
@@ -18,7 +19,7 @@ function createSharedDrive(driveName) {
   }
 }
 
-function getSharedDrive(driveName) {
+function getSharedDriveServiceAgent(driveName) {
   var query = 'name = "' + driveName + '"';
   var optionalArgs = { 
     q: query
@@ -34,12 +35,23 @@ function getSharedDrive(driveName) {
   return false;
 }
 
+function deleteDriveServiceAgent(driveId) {
+  try {
+    Drive.Drives.remove(driveId);
+    return true;
+  }
+  catch (err) {
+    Logger.log(JSON.stringify(err));
+    return false;
+  }
+}
+
 // FOLDERS
 //
 // - CREATE FOLDER
 // - GET FOLDER
 
-function createFolder(folderName, parentObjectId) {
+function createFolderServiceAgent(folderName, parentObjectId) {
   var resource = {
     title: folderName,
     mimeType: "application/vnd.google-apps.folder",
@@ -59,7 +71,7 @@ function createFolder(folderName, parentObjectId) {
   }
 }
 
-function getFolder(folderName) {
+function getFolderServiceAgent(folderName) {
   var query = 'mimeType = "application/vnd.google-apps.folder" AND title = "' + folderName + '"';
   var optionalArgs = { 
     q: query,
@@ -78,13 +90,29 @@ function getFolder(folderName) {
   }
 }
 
+function deleteFolderServiceAgent(folderId) {
+  try {
+    var optionalArgs = { 
+      supportsAllDrives: true,
+      corpora: "allDrives",
+      includeItemsFromAllDrives : true
+    };
+    Drive.Files.remove(folderId, optionalArgs);
+    return true;
+  }
+  catch (err) {
+    Logger.log(JSON.stringify(err));
+    return false;
+  }
+}
+
 // PERMISSIONS
 //
-// - LIST PERMISSIONS IN SHARED DRIVE
-// - SET PERMISSIONS TO SHARED DRIVE
-// - DELETE PERMISSIONS IN SHARED DRIVE
+// - LIST PERMISSIONS IN ELEMENT
+// - SET PERMISSIONS TO ELEMENT
+// - DELETE PERMISSIONS IN ELEMENT
 
-function listPermissionsInElement(elementId) {
+function listPermissionsInElementServiceAgent(elementId) {
   var optionalArgs = { 
     supportsAllDrives: true
     };
@@ -97,10 +125,7 @@ function listPermissionsInElement(elementId) {
   }
 }
 
-function setPermissionsToElement(elementId, userEmail, role) {
-  if (!(variableInEnum(role, DriveRoles))) {
-    return false;
-  }
+function setPermissionsToElementServiceAgent(elementId, userEmail, role) {
   var resource = {
     role: role,
     type: "user",
@@ -121,7 +146,7 @@ function setPermissionsToElement(elementId, userEmail, role) {
   }
 }
 
-function deletePermissionInElement(elementId, permissionId) {
+function deletePermissionInElementServiceAgent(elementId, permissionId) {
   var optionalArgs = { 
     supportsAllDrives: true
     };
