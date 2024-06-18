@@ -18,4 +18,3 @@ function getDataInSheet(sheetName) {
   sheet = ss.getSheetByName(sheetName);
   return sheet.getDataRange().getValues();
 }
-
